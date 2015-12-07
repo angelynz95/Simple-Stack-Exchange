@@ -1,0 +1,36 @@
+Comment Vote Service/build
+Comment Vote Service/dist
+Comment Vote Service/lib
+Comment Vote Service/nbproject
+Comment Vote Service/setup
+Comment Vote Service/src/conf
+Comment Vote Service/web/WEB-INF
+Comment Vote Service/build.xml
+Comment Vote Service/catalog.xml
+Frontend WebApp/build
+Frontend WebApp/dist
+Frontend WebApp/lib
+Frontend WebApp/nbproject
+Frontend WebApp/setup
+Frontend WebApp/src/conf
+Frontend WebApp/web/WEB-INF
+Frontend WebApp/build.xml
+Frontend WebApp/catalog.xml
+Identity Service/build
+Identity Service/dist
+Identity Service/lib
+Identity Service/nbproject
+Identity Service/setup
+Identity Service/src/conf
+Identity Service/web/WEB-INF
+Identity Service/build.xml
+Identity Service/catalog.xml
+Stackexchange WS/build
+Stackexchange WS/dist
+Stackexchange WS/lib
+Stackexchange WS/nbproject
+Stackexchange WS/setup
+Stackexchange WS/src/conf
+Stackexchange WS/web/WEB-INF
+Stackexchange WS/build.xml
+Stackexchange WS/catalog.xml
