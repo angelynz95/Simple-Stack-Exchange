@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -43,11 +44,27 @@ public class EditController extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         
+        // Mendapatkan user agent browser
+    String userAgent = request.getHeader("User-Agent");
+
+    // Mendapatkan IP Address
+    // Memeriksa apakah client terhubung melalui proxy atau load balancer
+    String ipAddress = request.getHeader("X-FORWARDED-FOR");
+    if (ipAddress == null) {  
+      ipAddress = request.getRemoteAddr();
+    }
+
+    // Set cookie
+    Cookie browserNameCookie = new Cookie ("user-agent", userAgent);
+    Cookie ipAddressCookie = new Cookie ("ip-address", ipAddress);
+    response.addCookie(browserNameCookie);
+    response.addCookie(ipAddressCookie);
+    
         // Memvalidasi token
-        int userId = getUserByToken(request.getParameter("token"), "http://localhost:8082/Identity_Service/TokenController");
+        int userId = getUserByToken(request.getParameter("token"), "http://localhost:8082/Identity_Service/TokenController", userAgent, ipAddress);
         if (userId > 0) {
             if (request.getParameter("name") == null) {
-              boolean editQuestion = editQuestion(Integer.parseInt(request.getParameter("qid")), request.getParameter("question-topic"), request.getParameter("question-content"), request.getParameter("token"));
+              boolean editQuestion = editQuestion(Integer.parseInt(request.getParameter("qid")), request.getParameter("question-topic"), request.getParameter("question-content"), request.getParameter("token"), userAgent, ipAddress);
               
               if (editQuestion) {
                 response.sendRedirect("QuestionDetailController?token="+request.getParameter("token")+"&qid="+request.getParameter("qid"));
@@ -106,24 +123,26 @@ public class EditController extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
-    private int getUserByToken(java.lang.String token, java.lang.String urlString) {
-        // Note that the injected javax.xml.ws.Service reference as well as port objects are not thread safe.
-        // If the calling of port operations may lead to race condition some synchronization is required.
-        UserWS.UserWS port = service.getUserWSPort();
-        return port.getUserByToken(token, urlString);
-    }
-
-  private boolean editQuestion(int questionId, java.lang.String topic, java.lang.String content, java.lang.String token) {
-    // Note that the injected javax.xml.ws.Service reference as well as port objects are not thread safe.
-    // If the calling of port operations may lead to race condition some synchronization is required.
-    QuestionWS.QuestionWS port = service_1.getQuestionWSPort();
-    return port.editQuestion(questionId, topic, content, token);
-  }
-
   private java.util.List<QuestionWS.Question> getQuestion(int idQuestion) {
     // Note that the injected javax.xml.ws.Service reference as well as port objects are not thread safe.
     // If the calling of port operations may lead to race condition some synchronization is required.
     QuestionWS.QuestionWS port = service_1.getQuestionWSPort();
     return port.getQuestion(idQuestion);
   }
+
+  private int getUserByToken(java.lang.String token, java.lang.String urlString, java.lang.String userAgent, java.lang.String ipAddress) {
+    // Note that the injected javax.xml.ws.Service reference as well as port objects are not thread safe.
+    // If the calling of port operations may lead to race condition some synchronization is required.
+    UserWS.UserWS port = service.getUserWSPort();
+    return port.getUserByToken(token, urlString, userAgent, ipAddress);
+  }
+
+  private boolean editQuestion(int questionId, java.lang.String topic, java.lang.String content, java.lang.String token, java.lang.String userAgent, java.lang.String ipAddress) {
+    // Note that the injected javax.xml.ws.Service reference as well as port objects are not thread safe.
+    // If the calling of port operations may lead to race condition some synchronization is required.
+    QuestionWS.QuestionWS port = service_1.getQuestionWSPort();
+    return port.editQuestion(questionId, topic, content, token, userAgent, ipAddress);
+  }
+
+
 }

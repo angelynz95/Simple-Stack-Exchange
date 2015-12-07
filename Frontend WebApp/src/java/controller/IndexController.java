@@ -12,6 +12,7 @@ import UserWS.User;
 import UserWS.UserWS_Service;
 import java.io.IOException;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -44,6 +45,23 @@ public class IndexController extends HttpServlet {
    */
   protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     response.setContentType("text/html;charset=UTF-8");
+    
+    // Mendapatkan user agent browser
+    String userAgent = request.getHeader("User-Agent");
+
+    // Mendapatkan IP Address
+    // Memeriksa apakah client terhubung melalui proxy atau load balancer
+    String ipAddress = request.getHeader("X-FORWARDED-FOR");
+    if (ipAddress == null) {  
+      ipAddress = request.getRemoteAddr();
+    }
+
+    // Set cookie
+    Cookie browserNameCookie = new Cookie ("user-agent", userAgent);
+    Cookie ipAddressCookie = new Cookie ("ip-address", ipAddress);
+    response.addCookie(browserNameCookie);
+    response.addCookie(ipAddressCookie);
+    
     // Memperoleh pertanyaan yang dicari
     java.util.List<QuestionWS.Question> questions;
     if (request.getParameter("keyword") != null) {
@@ -72,7 +90,7 @@ public class IndexController extends HttpServlet {
     
     // Memperoleh user id berdasarkan token
     if ((request.getParameter("token") != "not-valid") && (request.getParameter("token") != null)) {
-        int userId = getUserByToken(request.getParameter("token"), "http://localhost:8082/Identity_Service/TokenController");
+        int userId = getUserByToken(request.getParameter("token"), "http://localhost:8082/Identity_Service/TokenController", userAgent, ipAddress);
         if (userId > 0) {
             request.setAttribute("userId", userId);
             request.getServletContext().getRequestDispatcher("/index.jsp").forward(request, response);
@@ -144,17 +162,17 @@ public class IndexController extends HttpServlet {
         return port.getUserByIdQuestion(qid);
     }
 
-    private int getUserByToken(java.lang.String token, java.lang.String urlString) {
-        // Note that the injected javax.xml.ws.Service reference as well as port objects are not thread safe.
-        // If the calling of port operations may lead to race condition some synchronization is required.
-        UserWS.UserWS port = service_2.getUserWSPort();
-        return port.getUserByToken(token, urlString);
-    }
-
   private java.util.List<QuestionWS.Question> getQuestionsSearched(java.lang.String keyword) {
     // Note that the injected javax.xml.ws.Service reference as well as port objects are not thread safe.
     // If the calling of port operations may lead to race condition some synchronization is required.
     QuestionWS.QuestionWS port = service.getQuestionWSPort();
     return port.getQuestionsSearched(keyword);
+  }
+
+  private int getUserByToken(java.lang.String token, java.lang.String urlString, java.lang.String userAgent, java.lang.String ipAddress) {
+    // Note that the injected javax.xml.ws.Service reference as well as port objects are not thread safe.
+    // If the calling of port operations may lead to race condition some synchronization is required.
+    UserWS.UserWS port = service_2.getUserWSPort();
+    return port.getUserByToken(token, urlString, userAgent, ipAddress);
   }
 }

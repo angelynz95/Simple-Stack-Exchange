@@ -143,7 +143,7 @@ public class UserWS {
    * Web service operation
    */
   @WebMethod(operationName = "getUserByToken")
-  public int getUserIdByToken(@WebParam(name = "token") String token, @WebParam(name = "urlString") String urlString) {
+  public int getUserIdByToken(@WebParam(name = "token") String token, @WebParam(name = "urlString") String urlString, @WebParam(name = "userAgent") String userAgent, @WebParam(name = "ipAddress") String ipAddress) {
     //TODO write your implementation code here:
     boolean valid = false;
     int userId = 0;

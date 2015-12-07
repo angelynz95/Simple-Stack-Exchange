@@ -16,6 +16,7 @@ import static java.lang.System.console;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -57,20 +58,35 @@ public class TokenController extends HttpServlet {
       response.setContentType("application/json; charset=UTF-8");
       PrintWriter writer = response.getWriter();
       // Mendapatkan user agent browser
-      String userAgent = request.getHeader("User-Agent");
+//      String userAgent = request.getHeader("User-Agent");
+//      
+//      // Mendapatkan IP Address
+//      // Memeriksa apakah client terhubung melalui proxy atau load balancer
+//      String ipAddress = request.getHeader("X-FORWARDED-FOR");
+//      if (ipAddress == null) {  
+//        ipAddress = request.getRemoteAddr();
+//      }
       
-      // Mendapatkan IP Address
-      // Memeriksa apakah client terhubung melalui proxy atau load balancer
-      String ipAddress = request.getHeader("X-FORWARDED-FOR");
-      if (ipAddress == null) {  
-        ipAddress = request.getRemoteAddr();
+      // Get cookie
+      Cookie[] cookies = null;
+      cookies = request.getCookies();
+      String userAgent = null;
+      String ipAddress = null;
+      for (int i=0; i<cookies.length; i++) {
+        String cookieName = cookies[i].getName();
+        if (cookieName.equals("user-agent")) {
+          userAgent = cookies[i].getValue();
+        } else if (cookieName.equals("ip-address")) {
+           ipAddress = cookies[i].getValue();
+        }
       }
-      TokenExecutor executor = new TokenExecutor(token);
-      executor.closeConnection();
+      
+      TokenExecutor executor = new TokenExecutor(token, userAgent, ipAddress);
       
       JSONObject resp = new JSONObject();
       resp.put("is_valid", executor.getIsValid());
       resp.put("id_user", executor.getIdUser());
+      executor.closeConnection();
       writer.println(resp);
     } catch (ParseException ex) {
       Logger.getLogger(TokenController.class.getName()).log(Level.SEVERE, null, ex);

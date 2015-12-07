@@ -24,18 +24,20 @@ public class HttpServer{
     // Token
     String userAgent = "Mozilla/5.0 (Windows NT 6.3; WOW64; rv:42.0) Gecko/20100101 Firefox/42.0";
     String ipAddress = "0:0:0:0:0:0:0:1";
-//    TokenExecutor executor = new TokenExecutor("irene@gmail.com", "test", userAgent, ipAddress);
+    TokenExecutor executor = new TokenExecutor("irene@gmail.com", "test", userAgent, ipAddress);
+    String tokenSend = executor.getToken().getAccessToken().substring(0, 36);
 //    TokenExecutor executor = new TokenExecutor("c14f5617-f819-346c-82fa-6ab346c8d98a", userAgent, ipAddress);
 //    c14f5617-f819-346c-82fa-6ab346c8d98a#Firefox 42#0:0:0:0:0:0:0:1
 //    executor.closeConnection();
-    TokenExecutor executor = new TokenExecutor("61618416-7e4c-3861-8f86-f53c83f46c7f");
-      executor.closeConnection();
+//    TokenExecutor executor = new TokenExecutor("61618416-7e4c-3861-8f86-f53c83f46c7f");
+//      executor.closeConnection();
 //    System.out.println(executor.getBrowserName(userAgent));
 //    System.out.println(executor.getToken().getRandomString());
     
-    System.out.println(executor.getIdUser());
-    System.out.println(executor.getIsValid());
-      
+//    System.out.println(executor.getIdUser());
+//    System.out.println(executor.getIsValid());
+      System.out.println(tokenSend);
+      System.out.println("c14f5617-f819-346c-82fa-6ab346c8d98a#Firefox 42#0:0:0:0:0:0:0:1".substring(0, 36));
   }
  
 }

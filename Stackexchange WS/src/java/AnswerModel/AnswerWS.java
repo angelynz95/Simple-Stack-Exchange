@@ -13,6 +13,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.jws.*;
+import javax.servlet.http.Cookie;
 
 /**
  *
@@ -56,7 +57,7 @@ public class AnswerWS {
   }
   
   @WebMethod(operationName = "addAnswer")
-  public boolean addAnswer(@WebParam(name = "qid") int qid, @WebParam(name = "token") String token, @WebParam(name = "content") String content) {
+  public boolean addAnswer(@WebParam(name = "qid") int qid, @WebParam(name = "token") String token, @WebParam(name = "content") String content, @WebParam(name = "userAgent") String userAgent, @WebParam(name = "ipAddress") String ipAddress) {
     //TODO write your implementation code here:
     boolean isAdded = false;
     int userId = 0;
@@ -67,7 +68,7 @@ public class AnswerWS {
       
       // Request User ke Identity Service
       String urlString = "http://localhost:8082/Identity_Service/TokenController";
-      userId = u.getUserIdByToken(token,urlString);
+      userId = u.getUserIdByToken(token,urlString, userAgent, ipAddress);
       if (userId > 0) {
         String sql;
         sql = "INSERT INTO answer (id_question, id_user, content) VALUES (?,?,?)";
@@ -114,13 +115,13 @@ public class AnswerWS {
   }
 
   @WebMethod(operationName = "voteAnswer")
-  public boolean voteAnswer(@WebParam(name = "aid") int aid, @WebParam(name = "vote") String vote, @WebParam(name = "token") String token) {
+  public boolean voteAnswer(@WebParam(name = "aid") int aid, @WebParam(name = "vote") String vote, @WebParam(name = "token") String token, @WebParam(name = "userAgent") String userAgent, @WebParam(name = "ipAddress") String ipAddress) {
     boolean isVoted = false;
     int userId = 0;
     UserWS u = new UserWS();
     // Request User ke Identity Service
     String urlString = "http://localhost:8082/Identity_Service/TokenController";
-    userId = u.getUserIdByToken(token,urlString);
+    userId = u.getUserIdByToken(token,urlString, userAgent, ipAddress);
     if (userId > 0) {
       try {
         Connection conn = db.connectDatabase();

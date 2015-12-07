@@ -12,6 +12,7 @@ package controller;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -55,10 +56,17 @@ public class LogInController extends HttpServlet {
       if (ipAddress == null) {  
         ipAddress = request.getRemoteAddr();
       }
+      
       TokenExecutor executor = new TokenExecutor(email, password, userAgent, ipAddress);
       
+      // Set cookie
+      Cookie browserNameCookie = new Cookie ("user-agent", userAgent);
+      Cookie ipAddressCookie = new Cookie ("ip-address", ipAddress);
+      response.addCookie(browserNameCookie);
+      response.addCookie(ipAddressCookie);
+      
       JSONObject obj = new JSONObject();
-      String tokenSend = executor.getToken().getAccessToken();
+      String tokenSend = executor.getToken().getAccessToken().substring(0, 36);
       obj.put("access_token", tokenSend);
       out.print(obj);
       out.close();

@@ -10,6 +10,7 @@ import QuestionWS.QuestionWS_Service;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -37,9 +38,26 @@ public class VoteController extends HttpServlet {
   protected void processRequest(HttpServletRequest request, HttpServletResponse response)
           throws ServletException, IOException {
     response.setContentType("text/html;charset=UTF-8");
+    
+    // Mendapatkan user agent browser
+    String userAgent = request.getHeader("User-Agent");
+
+    // Mendapatkan IP Address
+    // Memeriksa apakah client terhubung melalui proxy atau load balancer
+    String ipAddress = request.getHeader("X-FORWARDED-FOR");
+    if (ipAddress == null) {  
+      ipAddress = request.getRemoteAddr();
+    }
+
+    // Set cookie
+    Cookie browserNameCookie = new Cookie ("user-agent", userAgent);
+    Cookie ipAddressCookie = new Cookie ("ip-address", ipAddress);
+    response.addCookie(browserNameCookie);
+    response.addCookie(ipAddressCookie);
+    
     if ("answer-up".contains(request.getParameter("name"))) {
       int aid = Integer.parseInt(request.getParameter("aid"));
-      boolean voteSuccess = voteAnswer(aid, "up", request.getParameter("token"));
+      boolean voteSuccess = voteAnswer(aid, "up", request.getParameter("token"), userAgent, ipAddress);
       if (voteSuccess) {
         response.sendRedirect("QuestionDetailController?token=" + request.getParameter("token") + "&qid=" + request.getParameter("qid"));
       } else {
@@ -47,7 +65,7 @@ public class VoteController extends HttpServlet {
       }
     } else if ("answer-down".contains(request.getParameter("name"))) {
       int aid = Integer.parseInt(request.getParameter("aid"));
-      boolean voteSuccess = voteAnswer(aid, "down", request.getParameter("token"));
+      boolean voteSuccess = voteAnswer(aid, "down", request.getParameter("token"), userAgent, ipAddress);
       if (voteSuccess) {
         response.sendRedirect("QuestionDetailController?token=" + request.getParameter("token") + "&qid=" + request.getParameter("qid"));
       } else {
@@ -55,7 +73,7 @@ public class VoteController extends HttpServlet {
       }
     } else if ("question-up".contains(request.getParameter("name"))) {
       int qid = Integer.parseInt(request.getParameter("qid"));
-      int voteSuccess = voteQuestion(qid, request.getParameter("token"), "up");
+      int voteSuccess = voteQuestion(qid, request.getParameter("token"), "up", userAgent, ipAddress);
       if ((voteSuccess == 1) || (voteSuccess == 0)) {
         response.sendRedirect("QuestionDetailController?token=" + request.getParameter("token") + "&qid=" + request.getParameter("qid"));
       } else {
@@ -63,7 +81,7 @@ public class VoteController extends HttpServlet {
       }
     } else if ("question-down".contains(request.getParameter("name"))) {
       int qid = Integer.parseInt(request.getParameter("qid"));
-      int voteSuccess = voteQuestion(qid, request.getParameter("token"), "down");
+      int voteSuccess = voteQuestion(qid, request.getParameter("token"), "down", userAgent, ipAddress);
       if ((voteSuccess == 1) || (voteSuccess == 0)) {
         response.sendRedirect("QuestionDetailController?token=" + request.getParameter("token") + "&qid=" + request.getParameter("qid"));
       } else {
@@ -112,17 +130,19 @@ public class VoteController extends HttpServlet {
     return "Short description";
   }// </editor-fold>
 
-  private boolean voteAnswer(int aid, java.lang.String vote, java.lang.String token) {
-    // Note that the injected javax.xml.ws.Service reference as well as port objects are not thread safe.
-    // If the calling of port operations may lead to race condition some synchronization is required.
-    AnswerWS.AnswerWS port = service.getAnswerWSPort();
-    return port.voteAnswer(aid, vote, token);
-  }
-
-  private int voteQuestion(int qid, java.lang.String token, java.lang.String vote) {
+  private int voteQuestion(int qid, java.lang.String token, java.lang.String vote, java.lang.String userAgent, java.lang.String ipAddress) {
     // Note that the injected javax.xml.ws.Service reference as well as port objects are not thread safe.
     // If the calling of port operations may lead to race condition some synchronization is required.
     QuestionWS.QuestionWS port = service_1.getQuestionWSPort();
-    return port.voteQuestion(qid, token, vote);
+    return port.voteQuestion(qid, token, vote, userAgent, ipAddress);
   }
+
+  private boolean voteAnswer(int aid, java.lang.String vote, java.lang.String token, java.lang.String userAgent, java.lang.String ipAddress) {
+    // Note that the injected javax.xml.ws.Service reference as well as port objects are not thread safe.
+    // If the calling of port operations may lead to race condition some synchronization is required.
+    AnswerWS.AnswerWS port = service.getAnswerWSPort();
+    return port.voteAnswer(aid, vote, token, userAgent, ipAddress);
+  }
+
+
 }

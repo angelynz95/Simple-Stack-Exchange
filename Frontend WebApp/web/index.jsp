@@ -44,7 +44,7 @@ Author:
         StackExchange
       </a>
     </div>
-
+        
     <div class="content">
       <!-- Search Bar -->
       <div class="stacked" id="search-section">
