@@ -1,28 +1,26 @@
 /*
- * Tugas 3 IF3110 Pengembangan Aplikasi Web
- * Website StackExchangeWS Sederhana
- * dengan tambahan web security dan frontend framework
- * 
- * @author Irene Wiliudarsan - 13513002
- * @author Angela Lynn - 13513032
- * @author Devina Ekawati - 13513088
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
  */
 package controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.json.simple.JSONObject;
 import main.Vote;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 /**
  *
- * Servlet untuk koneksi dengan AngularJS untuk operasi vote question dan answer
+ * @author Devina
  */
-public class VoteController extends HttpServlet {
+public class GetAnswerNumVoteController extends HttpServlet {
 
   /**
    * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -45,39 +43,24 @@ public class VoteController extends HttpServlet {
     response.setHeader("Access-Control-Allow-Headers", "Content-Type, X-Requested-With");
     response.setHeader("Access-Control-Max-Age", "86400");
     
-    String voteType = request.getParameter("voteType");
-    String token = request.getParameter("token");
-    String userAgent = request.getHeader("User-Agent");
+    int questionId = Integer.parseInt(request.getParameter("qid"));
     Vote vote = new Vote();
     
     
     try (PrintWriter out = response.getWriter()) {
+      
+      JSONArray objArray = new JSONArray();
       JSONObject obj = new JSONObject();
-      if ("answer-up".equals(voteType)) {
-        int idAnswer = Integer.parseInt(request.getParameter("id"));
-        int voteNum = vote.voteAnswer(idAnswer, token, userAgent, "up");
+      
+      ArrayList<Integer> voteNumAnswer = vote.getAnswerVoteNumByQuestionId(questionId);
+      for (int i = 0; i < voteNumAnswer.size(); i++) {
+        JSONObject voteNumAnswerJSON = new JSONObject();
+        voteNumAnswerJSON.put("voteNumAnswer", voteNumAnswer.get(i));
         
-        obj.put("voteNumAnswer", voteNum);
-        
-      } else if ("answer-down".equals(voteType)) {
-        int idAnswer = Integer.parseInt(request.getParameter("id"));
-        int voteNum = vote.voteAnswer(idAnswer, token, userAgent, "down");
-        
-        obj.put("voteNumAnswer", voteNum);
-        
-      } else if ("question-up".equals(voteType)) {
-        int idQuestion = Integer.parseInt(request.getParameter("id"));
-        int voteNum = vote.voteQuestion(idQuestion, token, userAgent, "up");
-        
-        obj.put("voteNumQuestion", voteNum);
-        
-      } else if ("question-down".equals(voteType)) {
-        int idQuestion = Integer.parseInt(request.getParameter("id"));
-        int voteNum = vote.voteQuestion(idQuestion, token, userAgent, "down");
-        
-        obj.put("voteNumQuestion", voteNum);
-        
+        objArray.add(voteNumAnswerJSON);
       }
+      
+      obj.put("voteNumAnswer", objArray);
       
       out.print(obj);
       out.close();

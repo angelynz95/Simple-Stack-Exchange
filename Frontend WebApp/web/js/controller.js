@@ -12,37 +12,49 @@
 
 var stackExchange = angular.module('stackExchange', []);
 
-stackExchange.config(['$httpProvider', function ($httpProvider) {
-  //Reset headers to avoid OPTIONS request (aka preflight)
-  $httpProvider.defaults.headers.common = {};
-  $httpProvider.defaults.headers.post = {};
-  $httpProvider.defaults.headers.put = {};
-  $httpProvider.defaults.headers.patch = {};
-}]);
-
-stackExchange.controller('VoteController', function ($scope, $http) {
+stackExchange.controller('VoteController', function ($scope, $http, $location) {
     // Jika tombol vote di klik
-    $scope.vote = function(id, voteType) { 
+    
+    $scope.voteAnswer = function(id, voteType, token) { 
         // Membuat http request
-        
         $http({
           method: "POST",
           url: "http://localhost:8083/Comment_Vote_Service/VoteController",
           params: { voteType: voteType, 
-                  id: id},
+                  id: id,
+                  token: token  },
           dataType: "json",
           headers : {
                 'Content-Type' : 'application/x-www-form-urlencoded; charset=UTF-8'
                 },
           
-          success: function(data, status, headers, config) {
-            $scope.voteNum = data;
-           },
-           // Tidak ada response dari server
-           error: function(data, status, headers, config) {
+          
+        }).success(function(data, status, headers, config) {
+            $scope.voteNumAnswer = data;
+           }).error(function(data, status, headers, config) {
              $scope.status = status;
-           }
-        });
+           });
+    };
+    
+    $scope.voteQuestion = function(id, voteType, token) { 
+        // Membuat http request
+        $http({
+          method: "POST",
+          url: "http://localhost:8083/Comment_Vote_Service/VoteController",
+          params: { voteType: voteType, 
+                  id: id,
+                  token: token  },
+          dataType: "json",
+          headers : {
+                'Content-Type' : 'application/x-www-form-urlencoded; charset=UTF-8'
+                },
+          
+          
+        }).success(function(data, status, headers, config) {
+            $scope.voteNumQuestion = data;
+           }).error(function(data, status, headers, config) {
+             $scope.status = status;
+           });
     };
 });
 

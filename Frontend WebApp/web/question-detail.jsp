@@ -56,11 +56,11 @@ Author:
         <!-- Questions Content -->
         <div class="same-height-row">
           <div class="vote-number">
-              <div ng-click="vote(<%= questions.get(i).getIdQuestion() %>, 'question-up');"><img class="small-icon" src="img/up.png" name="question-up" /><br></div>
-            <div class="big-number" ng-init="voteNum=<%= questions.get(i).getVoteNum() %>" ng-model="voteNum">
-                {{ voteNum }}
+              <div ng-click='voteQuestion(<%= questions.get(i).getIdQuestion() %>, "question-up", "<%= request.getParameter("token") %>");'><img class="small-icon" src="img/up.png" name="question-up" /><br></div>
+            <div class="big-number" ng-init="voteNumQuestion.voteNumQuestion=<%= questions.get(i).getVoteNum() %>">
+                {{ voteNumQuestion.voteNumQuestion }}
             </div>
-              <div ng-click="vote(<%= questions.get(i).getIdQuestion() %>, 'question-up');"><img class="small-icon" src="img/down.png" name="question-down"/><br></div>
+              <div ng-click='voteQuestion(<%= questions.get(i).getIdQuestion() %>, "question-down", "<%= request.getParameter("token") %>");'><img class="small-icon" src="img/down.png" name="question-down"/><br></div>
           </div>
           <div class="right-position">
             <div class="answer-question-detail">
@@ -155,11 +155,11 @@ No wonder retailers wanted to make the name "Black Friday" mean something positi
         %>
         <div class="same-height-row border-bottom">
           <div class="vote-number">
-              <div ng-click="vote(<%= answers.get(i).getIdAnswer() %>, 'answer-up');"><img class="small-icon" src="img/up.png" onclick=""/><br></div>
-            <div class="big-number" id="answer-1" ng-init="voteNum=<%= answers.get(i).getVoteNum() %>" ng-model="voteNum">
-                {{ voteNum }}
+              <div ng-click='voteAnswer(<%= answers.get(i).getIdAnswer() %>, "answer-up", "<%= request.getParameter("token") %>");'><img class="small-icon" src="img/up.png" onclick=""/><br></div>
+            <div class="big-number" id="answer-1" ng-init="voteNumAnswer.voteNumAnswer=<%= answers.get(i).getVoteNum() %>" ng-model="voteNumAnswer">
+                {{ voteNumAnswer.voteNumAnswer }}
             </div>
-              <div ng-click="vote(<%= answers.get(i).getIdAnswer() %>, 'answer-down');"><img class="small-icon" src="img/down.png" name="answer-up"/><br></div>
+              <div ng-click="voteAnswer(<%= answers.get(i).getIdAnswer() %>, 'answer-down', '<%= request.getParameter("token") %>');"><img class="small-icon" src="img/down.png" name="answer-up"/><br></div>
           </div>
           <!-- Answers Content -->
           <div class="right-position">

@@ -16,6 +16,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -66,7 +67,7 @@ public class Vote {
   }
   
   public int voteQuestion(int idQuestion, String token, String userAgent, String voteType) {
-    int isVoted = -1;
+    int voteNum=0;
     User user = new User();
     
     // Request User ke Identity Service
@@ -80,7 +81,7 @@ public class Vote {
       Connection conn = database.connectDatabase();
       Statement stmt = conn.createStatement();
       String sql;
-      int voteNum=0;
+      
       sql = "SELECT vote_num FROM question WHERE id_question = ?";
       PreparedStatement dbStatement1 = conn.prepareStatement(sql);
       dbStatement1.setInt(1, idQuestion);
@@ -111,7 +112,7 @@ public class Vote {
           dbStatement3.setInt(2, userId);
           dbStatement3.executeUpdate();
 
-          isVoted = 1;
+          
           rs.close();
           stmt.close();
         }
@@ -120,7 +121,7 @@ public class Vote {
     } catch (SQLException ex) {
       Logger.getLogger(Vote.class.getName()).log(Level.SEVERE, null, ex);
     }
-    return isVoted;
+    return voteNum;
   }
   
   public int voteAnswer(int idAnswer, String token, String userAgent, String voteType) {
@@ -163,6 +164,31 @@ public class Vote {
           rs.close();
           stmt.close();
         }
+      } catch (SQLException ex) {
+        Logger.getLogger(Vote.class.getName()).log(Level.SEVERE, null, ex);
+      }
+    
+    return voteNum;
+  }
+  
+  public ArrayList<Integer> getAnswerVoteNumByQuestionId(int idQuestion) {
+    ArrayList<Integer> voteNum = new ArrayList<Integer>();
+    
+    try {
+        Database database = new Database();
+        Connection conn = database.connectDatabase();
+        Statement stmt = conn.createStatement();
+        String sql;
+        
+        sql = "SELECT vote_num FROM answer WHERE id_question = ?";
+        PreparedStatement dbStatement1 = conn.prepareStatement(sql);
+        dbStatement1.setInt(1, idQuestion);
+        ResultSet rs = dbStatement1.executeQuery();
+
+        while (rs.next()) {
+          voteNum.add(rs.getInt("vote_num"));
+        }
+        
       } catch (SQLException ex) {
         Logger.getLogger(Vote.class.getName()).log(Level.SEVERE, null, ex);
       }
