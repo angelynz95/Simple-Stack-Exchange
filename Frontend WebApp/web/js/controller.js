@@ -24,11 +24,16 @@ stackExchange.controller('VoteController', function ($scope, $http) {
     // Jika tombol vote di klik
     $scope.vote = function(id, voteType) { 
         // Membuat http request
+        
         $http({
           method: "POST",
           url: "http://localhost:8083/Comment_Vote_Service/VoteController",
-          data: { voteType: voteType, 
+          params: { voteType: voteType, 
                   id: id},
+          dataType: "json",
+          headers : {
+                'Content-Type' : 'application/x-www-form-urlencoded; charset=UTF-8'
+                },
           
           success: function(data, status, headers, config) {
             $scope.voteNum = data;
