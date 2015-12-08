@@ -12,12 +12,16 @@ package controller;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import main.Comment;
-import org.json.simple.JSONObject;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  *
@@ -43,7 +47,7 @@ public class CommentController extends HttpServlet {
     
     response.setHeader("Access-Control-Allow-Origin", "*");
     response.setHeader("Access-Control-Allow-Methods", "POST");
-    response.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    response.setHeader("Access-Control-Allow-Headers", "Content-Type, X-Requested-With");
     response.setHeader("Access-Control-Max-Age", "86400");
     
     int idQuestion = Integer.parseInt(request.getParameter("qid"));
@@ -59,9 +63,29 @@ public class CommentController extends HttpServlet {
     ArrayList<Comment> comments = comment.getComments(idQuestion);
     
     try (PrintWriter out = response.getWriter()) {
+      // Mengubah array comments ke bentuk JSON
+      JSONArray arr = new JSONArray();
+      for (int i = 0; i < comments.size(); i++) {
+        JSONObject temp = new JSONObject();
+        try {
+          temp.put("idComment", comments.get(i).getIdComment());
+          temp.put("idQuestion", comments.get(i).getIdQuestion());
+          temp.put("idUser", comments.get(i).getIdUser());
+          temp.put("content", comments.get(i).getContent());
+          temp.put("datetime", comments.get(i).getDatetime());
+        } catch (JSONException ex) {
+          Logger.getLogger(CommentController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        arr.put(temp);
+      }
+      
       JSONObject obj = new JSONObject();
-      obj.put("commentAdded", commentAdded);
-      obj.put("comments", comments);
+      try {
+        obj.put("commentAdded", commentAdded);
+        obj.put("comments", arr);
+      } catch (JSONException ex) {
+        Logger.getLogger(CommentController.class.getName()).log(Level.SEVERE, null, ex);
+      }
       out.print(obj);
       out.close();
     }

@@ -96,11 +96,11 @@ Author:
             }
             %>
             <!-- Comments List -->
-            <div class="border-top">
-              <div class="comment stacked border-bottom">
-                That destroyed any confidence investors had in the stock market, which in those days was perceived to be the economy. Many had invested their life savings and were entirely wiped out.
-
-No wonder retailers wanted to make the name "Black Friday" mean something positive. And, to them, the Friday after Thanksgiving is a very profitable day. To compensate, they decided to follow the adage, "If you can't beat 'em, join 'em."
+            <div class="border-top" ng-controller="CommentController">
+                <div class="comment stacked border-bottom"  ng-init="comments(<%= request.getParameter("qid") %>)">
+                  <div ng-repeat="comment in comments.comments">
+                    {{ comment.content }}
+                  </div>
                 <div class="right">
                   commented by Pak Yudis at 2015-11-30 11:27:23.0
                 </div>
@@ -112,11 +112,11 @@ No wonder retailers wanted to make the name "Black Friday" mean something positi
                   <div id="comment-title">
                     What's your comment?
                   </div>
-                  <form class="right" id="comment-form" action="" method="post" onsubmit="return answerFormValidation()">
+                  <form class="right" id="comment-form" action="" method="post" ng-controller="AddCommentController" onsubmit="return answerFormValidation()">
                     <input class="full-length" id="comment-name" name="comment-name" type="text" placeholder="Name">
                     <input class="full-length" id="comment-email" name="comment-email" type="email" placeholder="Email">
                     <textarea class="full-length" id="comment-content" name="comment-content" placeholder="Comment" rows="2" cols="50" required></textarea>
-                    <input class="button" id="comment-submit" name="comment-submit" type="submit" value="Post">
+                    <input class="button" id="comment-submit" name="comment-submit" ng-click="addComment(<%= request.getParameter("token") %>, <%= request.getParameter("qid") %>)" type="submit" value="Post">
                   </form>
                 </div>
               </div>

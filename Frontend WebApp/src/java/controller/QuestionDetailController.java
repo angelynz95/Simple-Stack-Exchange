@@ -48,7 +48,7 @@ public class QuestionDetailController extends HttpServlet {
     if (token != null) {
       idUser = getUserByToken(request.getParameter("token"), "http://localhost:8082/Identity_Service/TokenController");
     }
-    if (idUser > 0 || token != null ) {
+    if (idUser > 0 || token == null) {
       if (request.getParameter("qid") != null) {
         String temp = request.getParameter("qid");
         int id = Integer.parseInt(temp);

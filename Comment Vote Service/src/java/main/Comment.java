@@ -56,6 +56,27 @@ public class Comment {
     this.datetime = datetime;
   }
   
+  // Getter
+  public int getIdComment() {
+    return idComment;
+  }
+  
+  public int getIdQuestion() {
+    return idQuestion;
+  }
+  
+  public int getIdUser() {
+    return idUser;
+  }
+  
+  public String getContent() {
+    return content;
+  }
+  
+  public String getDatetime() {
+    return datetime;
+  }
+  
   // Method
   public boolean addComment(int _idQuestion, String _content, String token, String userAgent) {
     boolean commentAdded = false;
