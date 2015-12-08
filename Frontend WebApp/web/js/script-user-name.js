@@ -25,7 +25,6 @@ $(document).ready(function(){
     }
   };
 
-  var token = getUrlParameter("token");
   if (token !== undefined) {
     // Buat AJAX request
     $.ajax({

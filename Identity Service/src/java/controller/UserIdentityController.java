@@ -50,26 +50,13 @@ public class UserIdentityController extends HttpServlet {
     String token = request.getParameter("token");
     try (PrintWriter out = response.getWriter()) {
       // Mendapatkan user agent browser
-//      String userAgent = request.getHeader("User-Agent");
-//      
-//      // Mendapatkan IP Address
-//      // Memeriksa apakah client terhubung melalui proxy atau load balancer
-//      String ipAddress = request.getHeader("X-FORWARDED-FOR");
-//      if (ipAddress == null) {  
-//        ipAddress = request.getRemoteAddr();
-//      }
-       // Get cookie
-      Cookie[] cookies = null;
-      cookies = request.getCookies();
-      String userAgent = null;
-      String ipAddress = null;
-      for (int i=0; i<cookies.length; i++) {
-        String cookieName = cookies[i].getName();
-        if (cookieName.equals("user-agent")) {
-          userAgent = cookies[i].getValue();
-        } else if (cookieName.equals("ip-address")) {
-          ipAddress = cookies[i].getValue();
-        }
+      String userAgent = request.getHeader("User-Agent");
+      
+      // Mendapatkan IP Address
+      // Memeriksa apakah client terhubung melalui proxy atau load balancer
+      String ipAddress = request.getHeader("X-FORWARDED-FOR");
+      if (ipAddress == null) {  
+        ipAddress = request.getRemoteAddr();
       }
       TokenExecutor executor = new TokenExecutor(token, userAgent, ipAddress);
       ArrayList<String> identity = new ArrayList<String>();
