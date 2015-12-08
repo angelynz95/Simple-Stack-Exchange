@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.ws.WebServiceRef;
 import java.util.*;
+import javax.servlet.http.Cookie;
 
 /**
  *
@@ -43,10 +44,27 @@ public class QuestionDetailController extends HttpServlet {
   protected void processRequest(HttpServletRequest request, HttpServletResponse response)
           throws ServletException, IOException {
     response.setContentType("text/html;charset=UTF-8");
+    
+    // Mendapatkan user agent browser
+    String userAgent = request.getHeader("User-Agent");
+
+    // Mendapatkan IP Address
+    // Memeriksa apakah client terhubung melalui proxy atau load balancer
+    String ipAddress = request.getHeader("X-FORWARDED-FOR");
+    if (ipAddress == null) {  
+      ipAddress = request.getRemoteAddr();
+    }
+
+    // Set cookie
+    Cookie browserNameCookie = new Cookie ("user-agent", userAgent);
+    Cookie ipAddressCookie = new Cookie ("ip-address", ipAddress);
+    response.addCookie(browserNameCookie);
+    response.addCookie(ipAddressCookie);
+    
     String token = request.getParameter("token");
     int idUser = 0;
     if (token != null) {
-      idUser = getUserByToken(request.getParameter("token"), "http://localhost:8082/Identity_Service/TokenController");
+      idUser = getUserByToken(request.getParameter("token"), "http://localhost:8082/Identity_Service/TokenController", userAgent, ipAddress);
     }
     if (idUser > 0 || token == null) {
       if (request.getParameter("qid") != null) {
@@ -63,7 +81,7 @@ public class QuestionDetailController extends HttpServlet {
 
         if (request.getParameter("token") != null) {
           // Memperoleh user id berdasarkan token
-          int userId = getUserByToken(request.getParameter("token"), "http://localhost:8082/Identity_Service/TokenController");
+          int userId = getUserByToken(request.getParameter("token"), "http://localhost:8082/Identity_Service/TokenController", userAgent, ipAddress);
           request.setAttribute("userId", userId);
         }
 
@@ -153,10 +171,12 @@ public class QuestionDetailController extends HttpServlet {
     return port.getUserByIdQuestion(qid);
   }
 
-    private int getUserByToken(java.lang.String token, java.lang.String urlString) {
-        // Note that the injected javax.xml.ws.Service reference as well as port objects are not thread safe.
-        // If the calling of port operations may lead to race condition some synchronization is required.
-        UserWS.UserWS port = service_2.getUserWSPort();
-        return port.getUserByToken(token, urlString);
-    }    
+  private int getUserByToken(java.lang.String token, java.lang.String urlString, java.lang.String userAgent, java.lang.String ipAddress) {
+    // Note that the injected javax.xml.ws.Service reference as well as port objects are not thread safe.
+    // If the calling of port operations may lead to race condition some synchronization is required.
+    UserWS.UserWS port = service_2.getUserWSPort();
+    return port.getUserByToken(token, urlString, userAgent, ipAddress);
+  }
+
+    
 }

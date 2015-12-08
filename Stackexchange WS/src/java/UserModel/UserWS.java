@@ -143,7 +143,7 @@ public class UserWS {
    * Web service operation
    */
   @WebMethod(operationName = "getUserByToken")
-  public int getUserIdByToken(@WebParam(name = "token") String token, @WebParam(name = "urlString") String urlString) {
+  public int getUserIdByToken(@WebParam(name = "token") String token, @WebParam(name = "urlString") String urlString, @WebParam(name = "userAgent") String userAgent, @WebParam(name = "ipAddress") String ipAddress) {
     //TODO write your implementation code here:
     boolean valid = false;
     int userId = 0;
@@ -157,6 +157,8 @@ public class UserWS {
         JSONObject request = new JSONObject();
         try {
           request.put("token", token);
+          request.put("user-agent", userAgent);
+          request.put("ip-address", ipAddress);
         } catch (JSONException ex) {
           Logger.getLogger(QuestionWS.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -166,13 +168,17 @@ public class UserWS {
         connection.setDoOutput(true);
         connection.setInstanceFollowRedirects(false);
         connection.setRequestMethod("POST");
-        connection.setRequestProperty("Content-Type", "application/json");
-        connection.setRequestProperty("Content-Length", Integer.toString(request.toString().getBytes(StandardCharsets.UTF_8).length));
+        connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+        connection.setRequestProperty("charset", "utf-8");
+        String str = "token="+token+"&"+"user-agent="+userAgent+"&"+"ip-address="+ipAddress;
+        byte[] postData = str.getBytes(StandardCharsets.UTF_8);
+        connection.setRequestProperty("Content-Length", Integer.toString(postData.length));
         connection.setUseCaches(false);
 
         // Mengirim token ke Identity Service
-        DataOutputStream writer = new DataOutputStream(connection.getOutputStream());
-        writer.write(request.toString().getBytes(StandardCharsets.UTF_8));
+        DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
+        wr.write(postData);
+        
         // Menerima response dari Identity Service
         BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
         String inputLine;

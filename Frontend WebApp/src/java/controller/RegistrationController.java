@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -35,6 +36,23 @@ public class RegistrationController extends HttpServlet {
   protected void processRequest(HttpServletRequest request, HttpServletResponse response)
           throws ServletException, IOException {
     response.setContentType("text/html;charset=UTF-8");
+    
+    // Mendapatkan user agent browser
+    String userAgent = request.getHeader("User-Agent");
+
+    // Mendapatkan IP Address
+    // Memeriksa apakah client terhubung melalui proxy atau load balancer
+    String ipAddress = request.getHeader("X-FORWARDED-FOR");
+    if (ipAddress == null) {  
+      ipAddress = request.getRemoteAddr();
+    }
+
+    // Set cookie
+    Cookie browserNameCookie = new Cookie ("user-agent", userAgent);
+    Cookie ipAddressCookie = new Cookie ("ip-address", ipAddress);
+    response.addCookie(browserNameCookie);
+    response.addCookie(ipAddressCookie);
+    
     String name = request.getParameter("register-name");
     String email = request.getParameter("register-email");
     String password = request.getParameter("register-password");

@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -46,6 +47,7 @@ public class UserNameController extends HttpServlet {
     response.setHeader("Access-Control-Allow-Headers", "Content-Type");
     response.setHeader("Access-Control-Max-Age", "86400");
     String token = request.getParameter("token");
+    
     try (PrintWriter out = response.getWriter()) {
       // Mendapatkan user agent browser
       String userAgent = request.getHeader("User-Agent");
@@ -56,7 +58,7 @@ public class UserNameController extends HttpServlet {
       if (ipAddress == null) {  
         ipAddress = request.getRemoteAddr();
       }
-      TokenExecutor executor = new TokenExecutor(token);
+      TokenExecutor executor = new TokenExecutor(token, userAgent, ipAddress);
       
       JSONObject obj = new JSONObject();
       obj.put("user_name", executor.getUserName());

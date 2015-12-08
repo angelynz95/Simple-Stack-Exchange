@@ -38,7 +38,7 @@ public class Token {
     
     // Generate token
     String tokenSource = email + password + lifetime.toString();
-    accessToken = UUID.nameUUIDFromBytes(tokenSource.getBytes()).toString() + "" + browserName + "" + ipAddress;
+    accessToken = UUID.nameUUIDFromBytes(tokenSource.getBytes()).toString() + "#" + browserName + "#" + ipAddress;
   }
   
   // Konstruktor dengan akses token dan lifetime yang diberikan

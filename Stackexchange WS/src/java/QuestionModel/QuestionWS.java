@@ -75,7 +75,7 @@ public class QuestionWS {
   }
   
   @WebMethod(operationName = "addQuestion")
-  public boolean addQuestion(@WebParam(name = "topic") String topic, @WebParam(name = "content") String content, @WebParam(name = "token") String token) {
+  public boolean addQuestion(@WebParam(name = "topic") String topic, @WebParam(name = "content") String content, @WebParam(name = "token") String token, @WebParam(name = "userAgent") String userAgent, @WebParam(name = "ipAddress") String ipAddress) {
     //TODO write your implementation code here:
     boolean questionAdded = false;
     int userId = 0;
@@ -87,7 +87,7 @@ public class QuestionWS {
       Statement statement = connection.createStatement();
       
       // Request User ke Identity Service dengan token
-      userId = user.getUserIdByToken(token, "http://localhost:8082/Identity_Service/TokenController");
+      userId = user.getUserIdByToken(token, "http://localhost:8082/Identity_Service/TokenController", userAgent, ipAddress);
       
       if (userId > 0) {
         // Menjalankan query
@@ -109,7 +109,7 @@ public class QuestionWS {
   }
   
   @WebMethod(operationName = "editQuestion")
-  public boolean editQuestion(@WebParam(name = "question-id") int idQuestion, @WebParam(name = "topic") String topic, @WebParam(name = "content") String content, @WebParam(name = "token") String token) {
+  public boolean editQuestion(@WebParam(name = "question-id") int idQuestion, @WebParam(name = "topic") String topic, @WebParam(name = "content") String content, @WebParam(name = "token") String token, @WebParam(name = "userAgent") String userAgent, @WebParam(name = "ipAddress") String ipAddress) {
     //TODO write your implementation code here:
     boolean questionEdited = false;
     int userId = 0;
@@ -121,7 +121,7 @@ public class QuestionWS {
       Statement statement = connection.createStatement();
       
       // Memvalidasi token
-      userId = user.getUserIdByToken(token, "http://localhost:8082/Identity_Service/TokenController");
+      userId = user.getUserIdByToken(token, "http://localhost:8082/Identity_Service/TokenController", userAgent, ipAddress);
       
       if (userId > 0) {
         // Menjalankan query
@@ -143,7 +143,7 @@ public class QuestionWS {
   }
   
   @WebMethod(operationName = "deleteQuestion")
-  public boolean deleteQuestion(@WebParam(name = "id_question") int idQuestion, @WebParam(name = "token") String token) {
+  public boolean deleteQuestion(@WebParam(name = "id_question") int idQuestion, @WebParam(name = "token") String token, @WebParam(name = "userAgent") String userAgent, @WebParam(name = "ipAddress") String ipAddress) {
     //TODO write your implementation code here:
     boolean questionDeleted = false;
     int userId = 0;
@@ -155,7 +155,7 @@ public class QuestionWS {
       Statement statement = connection.createStatement();
       
       // Memvalidasi token
-      userId = user.getUserIdByToken(token, "http://localhost:8082/Identity_Service/TokenController");
+      userId = user.getUserIdByToken(token, "http://localhost:8082/Identity_Service/TokenController", userAgent, ipAddress);
       
       if (userId > 0) {
         // Menjalankan query
@@ -258,13 +258,13 @@ public class QuestionWS {
   }
   
   @WebMethod(operationName = "voteQuestion")
-  public int voteQuestion(@WebParam(name = "qid") int qid, @WebParam(name = "token") String token, @WebParam(name = "vote") String vote) {
+  public int voteQuestion(@WebParam(name = "qid") int qid, @WebParam(name = "token") String token, @WebParam(name = "vote") String vote, @WebParam(name = "userAgent") String userAgent, @WebParam(name = "ipAddress") String ipAddress) {
     int isVoted = -1;
     int uid = 0;
     UserWS user = new UserWS();
     
     // Memvalidasi token
-    uid = user.getUserIdByToken(token, "http://localhost:8082/Identity_Service/TokenController");
+    uid = user.getUserIdByToken(token, "http://localhost:8082/Identity_Service/TokenController", userAgent, ipAddress);
     
     if (uid > 0) {
       if (!hasUserVoteQuestion(qid, uid)) {

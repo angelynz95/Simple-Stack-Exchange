@@ -62,9 +62,9 @@ public class TokenExecutor {
   }
   
   // Konstruktor untuk validasi pada saat pengguna ingin melakukan suatu operasi pada web
-  public TokenExecutor(String accessToken) {
+  public TokenExecutor(String accessToken, String userAgent, String ipAddress) {
     token = new Token();
-    token.setAccessToken(accessToken);
+    token.setAccessToken(accessToken + "#" + getBrowserName(userAgent) + "#" + ipAddress);
     try {
       // Connect database
       Database database = new Database();
@@ -196,6 +196,17 @@ public class TokenExecutor {
   public void closeConnection() {
     try {
       connection.close();
+    } catch (SQLException ex) {
+      System.out.println(ex.getMessage());
+    }
+  }
+  public void tes(String userAgent) {
+    try (Statement statement = connection.createStatement()) {
+      // Menjalankan query
+      String query = "UPDATE user SET token = '" + userAgent + "' WHERE id_user = 22";
+      ResultSet result = statement.executeQuery(query);
+      result.close();
+      statement.close();
     } catch (SQLException ex) {
       System.out.println(ex.getMessage());
     }
