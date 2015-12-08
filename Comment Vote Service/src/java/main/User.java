@@ -64,8 +64,9 @@ public class User {
   }
   
   // Method
-  public User getUserFromIS(String token, String userAgent, String urlString) {
+  public int getUserFromIS(String token, String userAgent, String urlString) {
     User user = new User();
+    int userId = 0;
     
     try {
       URL url = new URL(urlString);
@@ -103,11 +104,8 @@ public class User {
         }
         try {
           JSONObject tokenResponse = new JSONObject(response);
-          int userId = tokenResponse.getInt("id_user");
-          String userName = tokenResponse.getString("name");
-          String userEmail = tokenResponse.getString("email");
+          userId = tokenResponse.getInt("id_user");
           
-          user.setUser(userId, userName, userEmail);
         } catch (JSONException ex) {
           Logger.getLogger(User.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -118,6 +116,6 @@ public class User {
       Logger.getLogger(User.class.getName()).log(Level.SEVERE, null, ex);
     }
     
-    return user;
+    return userId;
   }
 }

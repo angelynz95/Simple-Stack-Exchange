@@ -96,13 +96,13 @@ Author:
             }
             %>
             <!-- Comments List -->
-            <div class="border-top" ng-controller="CommentController">
-                <div class="comment stacked border-bottom"  ng-init="comments(<%= request.getParameter("qid") %>)">
-                  <div ng-repeat="comment in comments.comments">
+            <div class="border-top" ng-controller="CommentController" ng-init="comments(<%= request.getParameter("qid") %>)">
+                <div class="comment stacked border-bottom" ng-repeat="comment in comments.comments">
+                  
                     {{ comment.content }}
-                  </div>
+                  
                 <div class="right">
-                  commented by Pak Yudis at 2015-11-30 11:27:23.0
+                  commented by {{ comment.name }} at {{ comment.datetime }}
                 </div>
               </div>
               <div class="comment stacked border-bottom">
@@ -112,11 +112,11 @@ Author:
                   <div id="comment-title">
                     What's your comment?
                   </div>
-                  <form class="right" id="comment-form" action="" method="post" ng-controller="AddCommentController" onsubmit="return answerFormValidation()">
+                  <form class="right" id="comment-form" method="post" onsubmit="return answerFormValidation()">
                     <input class="full-length" id="comment-name" name="comment-name" type="text" placeholder="Name">
                     <input class="full-length" id="comment-email" name="comment-email" type="email" placeholder="Email">
-                    <textarea class="full-length" id="comment-content" name="comment-content" placeholder="Comment" rows="2" cols="50" required></textarea>
-                    <input class="button" id="comment-submit" name="comment-submit" ng-click="addComment(<%= request.getParameter("token") %>, <%= request.getParameter("qid") %>)" type="submit" value="Post">
+                    <textarea class="full-length" id="comment-content" name="comment-content" ng-model="commentContent" placeholder="Comment" rows="2" cols="50" required></textarea>
+                    <input class="button" id="comment-submit" name="comment-submit" ng-click="addComment('<%= request.getParameter("token") %>', '<%= request.getParameter("qid") %>')" type="submit" value="Post">
                   </form>
                 </div>
               </div>
@@ -156,8 +156,8 @@ Author:
         <div class="same-height-row border-bottom">
           <div class="vote-number">
               <div ng-click='voteAnswer(<%= answers.get(i).getIdAnswer() %>, "answer-up", "<%= request.getParameter("token") %>");'><img class="small-icon" src="img/up.png" onclick=""/><br></div>
-            <div class="big-number" id="answer-1" ng-init="voteNumAnswer.voteNumAnswer=<%= answers.get(i).getVoteNum() %>" ng-model="voteNumAnswer">
-                {{ voteNumAnswer.voteNumAnswer }}
+            <div class="big-number" id="answer-1" ng-init="voteNumAnswer[<%= answers.get(i).getIdAnswer() %>].voteNumAnswer=init(<%= answers.get(i).getIdAnswer() %>)" ng-model="voteNumAnswer">
+                {{ voteNumAnswer[<%= answers.get(i).getIdAnswer() %>].voteNumAnswer }}
             </div>
               <div ng-click="voteAnswer(<%= answers.get(i).getIdAnswer() %>, 'answer-down', '<%= request.getParameter("token") %>');"><img class="small-icon" src="img/down.png" name="answer-up"/><br></div>
           </div>

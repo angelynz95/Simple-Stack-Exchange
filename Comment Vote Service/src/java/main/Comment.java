@@ -32,6 +32,7 @@ public class Comment {
   int idUser;
   String content;
   String datetime;
+  String name;
   
   // Konstruktor
   public Comment() {
@@ -48,12 +49,13 @@ public class Comment {
     }
   }
   
-  public Comment(int idComment, int idQuestion, int idUser, String content, String datetime) {
+  public Comment(int idComment, int idQuestion, int idUser, String content, String datetime, String name) {
     this.idComment = idComment;
     this.idQuestion = idQuestion;
     this.idUser = idUser;
     this.content = content;
     this.datetime = datetime;
+    this.name = name;
   }
   
   // Getter
@@ -77,6 +79,10 @@ public class Comment {
     return datetime;
   }
   
+  public String getName() {
+    return name;
+  }
+  
   // Method
   public boolean addComment(int _idQuestion, String _content, String token, String userAgent) {
     boolean commentAdded = false;
@@ -86,15 +92,15 @@ public class Comment {
     try {
       Statement statement = connection.createStatement();
       // Request User ke Identity Service
-      user = user.getUserFromIS(token, userAgent, urlString);
+      int idUser = user.getUserFromIS(token, userAgent, urlString);
 
-      if (user.getIdUser() > 0) {
+      if (idUser > 0) {
         // Menjalankan query
         String query = "INSERT INTO comment (id_question, id_user, content) VALUES (?, ?, ?)";
         PreparedStatement databaseStatement;
         databaseStatement = connection.prepareStatement(query);
         databaseStatement.setInt(1, _idQuestion);
-        databaseStatement.setInt(2, user.getIdUser());
+        databaseStatement.setInt(2, idUser);
         databaseStatement.setString(3, _content);
         databaseStatement.executeUpdate();
         
@@ -114,7 +120,7 @@ public class Comment {
     try {
       Statement statement = connection.createStatement();
       // Menjalankan query
-      String query = "SELECT * FROM comment WHERE id_question = ?";
+      String query = "SELECT * FROM comment JOIN user ON comment.id_user = user.id_user WHERE id_question = ?";
       PreparedStatement databaseStatement = connection.prepareStatement(query);
       databaseStatement.setInt(1, qid);
       ResultSet result = databaseStatement.executeQuery();
@@ -125,7 +131,8 @@ public class Comment {
                                     result.getInt("id_question"),
                                     result.getInt("id_user"),
                                     result.getString("content"),
-                                    result.getString("datetime")));
+                                    result.getString("datetime"),
+                                    result.getString("name")));
       }
       
       result.close();

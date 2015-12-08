@@ -1,11 +1,7 @@
 /*
- * Tugas 3 IF3110 Pengembangan Aplikasi Web
- * Website StackExchangeWS Sederhana
- * dengan tambahan web security dan frontend framework
- * 
- * @author Irene Wiliudarsan - 13513002
- * @author Angela Lynn - 13513032
- * @author Devina Ekawati - 13513088
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
  */
 package controller;
 
@@ -27,7 +23,7 @@ import org.json.JSONObject;
  *
  * @author angelynz95
  */
-public class CommentController extends HttpServlet {
+public class AddCommentController extends HttpServlet {
 
   /**
    * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -40,6 +36,7 @@ public class CommentController extends HttpServlet {
    */
   protected void processRequest(HttpServletRequest request, HttpServletResponse response)
           throws ServletException, IOException {
+    System.out.println("pening");
     response.setContentType("application/json");
     response.setHeader("Cache-control", "no-cache, no-store");
     response.setHeader("Pragma", "no-cache");
@@ -51,9 +48,14 @@ public class CommentController extends HttpServlet {
     response.setHeader("Access-Control-Max-Age", "86400");
     
     int idQuestion = Integer.parseInt(request.getParameter("id"));
+    String token = request.getParameter("token");
+    String content = request.getParameter("content");
+    String userAgent = request.getHeader("User-Agent");
     
     Comment comment = new Comment();
     
+    // Menambah komentar baru
+    boolean commentAdded = comment.addComment(idQuestion, content, token, userAgent);
     // Membuat array list yang menampung semua komentar pada pertanyaan dengan id idQuestion
     ArrayList<Comment> comments = comment.getComments(idQuestion);
     
@@ -77,6 +79,7 @@ public class CommentController extends HttpServlet {
       
       JSONObject obj = new JSONObject();
       try {
+        obj.put("commentAdded", commentAdded);
         obj.put("comments", arr);
       } catch (JSONException ex) {
         Logger.getLogger(CommentController.class.getName()).log(Level.SEVERE, null, ex);

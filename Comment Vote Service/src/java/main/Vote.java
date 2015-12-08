@@ -72,8 +72,7 @@ public class Vote {
     
     // Request User ke Identity Service
     String urlString = "http://localhost:8082/Identity_Service/TokenController";
-    user = user.getUserFromIS(token, userAgent, urlString);
-    int userId = user.getIdUser();
+    int userId = user.getUserFromIS(token, userAgent, urlString);
     
     
     try {
@@ -129,8 +128,7 @@ public class Vote {
     int voteNum=0;
     // Request User ke Identity Service
     String urlString = "http://localhost:8082/Identity_Service/TokenController";
-    user = user.getUserFromIS(token, userAgent, urlString);
-    int userId = user.getIdUser();
+    int userId = user.getUserFromIS(token, userAgent, urlString);
     
     
       try {
@@ -171,8 +169,8 @@ public class Vote {
     return voteNum;
   }
   
-  public ArrayList<Integer> getAnswerVoteNumByQuestionId(int idQuestion) {
-    ArrayList<Integer> voteNum = new ArrayList<Integer>();
+  public int getAnswerVoteNumByAnswerId(int idAnswer) {
+    int voteNum = 0;
     
     try {
         Database database = new Database();
@@ -180,13 +178,13 @@ public class Vote {
         Statement stmt = conn.createStatement();
         String sql;
         
-        sql = "SELECT vote_num FROM answer WHERE id_question = ?";
+        sql = "SELECT vote_num FROM answer WHERE id_answer = ?";
         PreparedStatement dbStatement1 = conn.prepareStatement(sql);
-        dbStatement1.setInt(1, idQuestion);
+        dbStatement1.setInt(1, idAnswer);
         ResultSet rs = dbStatement1.executeQuery();
 
         while (rs.next()) {
-          voteNum.add(rs.getInt("vote_num"));
+          voteNum = rs.getInt("vote_num");
         }
         
       } catch (SQLException ex) {

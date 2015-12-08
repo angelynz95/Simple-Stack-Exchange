@@ -43,24 +43,18 @@ public class GetAnswerNumVoteController extends HttpServlet {
     response.setHeader("Access-Control-Allow-Headers", "Content-Type, X-Requested-With");
     response.setHeader("Access-Control-Max-Age", "86400");
     
-    int questionId = Integer.parseInt(request.getParameter("qid"));
+    int answerId = Integer.parseInt(request.getParameter("id"));
     Vote vote = new Vote();
     
     
     try (PrintWriter out = response.getWriter()) {
       
-      JSONArray objArray = new JSONArray();
       JSONObject obj = new JSONObject();
       
-      ArrayList<Integer> voteNumAnswer = vote.getAnswerVoteNumByQuestionId(questionId);
-      for (int i = 0; i < voteNumAnswer.size(); i++) {
-        JSONObject voteNumAnswerJSON = new JSONObject();
-        voteNumAnswerJSON.put("voteNumAnswer", voteNumAnswer.get(i));
-        
-        objArray.add(voteNumAnswerJSON);
-      }
+      int voteNumAnswer = vote.getAnswerVoteNumByAnswerId(answerId);
       
-      obj.put("voteNumAnswer", objArray);
+      
+      obj.put("voteNumAnswer", voteNumAnswer);
       
       out.print(obj);
       out.close();

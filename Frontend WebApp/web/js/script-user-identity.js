@@ -60,7 +60,7 @@ $(document).ready(function(){
   $("#comment-part").hide();
   $("#add-comment").click(function() {
     $("#comment-part").toggle();
-    $("#add-comment").toogle();
+    $("#add-comment").toggle();
   });
   $("#comment-form").submit(function() {
     $("#comment-part").toggle();

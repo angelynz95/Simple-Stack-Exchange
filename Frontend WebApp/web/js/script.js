@@ -23,6 +23,7 @@ function searchFormValidation() {
 // Check whether question form is valid or not
 // A valid form can not contain empty field and contain a valid email address
 function answerFormValidation(){
+  return true;
   var formValues = document.forms[0];
   var isFieldEmpty = false;
   var numberOfInput = 3;
@@ -36,6 +37,7 @@ function answerFormValidation(){
     }
   } while (!isFieldEmpty && i<numberOfInput);
   // Check whether email address is valid
+  console.log(formValues.elements["answer-email"]);
   var email = formValues.elements["answer-email"].value;
   var regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
   var isEmailValid = regex.test(email);

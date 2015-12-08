@@ -13,6 +13,26 @@
 var stackExchange = angular.module('stackExchange', []);
 
 stackExchange.controller('VoteController', function ($scope, $http, $location) {
+  
+  $scope.init = function(id) { 
+        // Membuat http request
+        $scope.voteNumAnswer = {};
+        $http({
+          method: "POST",
+          url: "http://localhost:8083/Comment_Vote_Service/GetAnswerNumVoteController",
+          params: { id: id},
+          dataType: "json",
+          headers : {
+                'Content-Type' : 'application/x-www-form-urlencoded; charset=UTF-8'
+                },
+        }).success(function(data, status, headers, config) {
+            $scope.voteNumAnswer[id] = data;
+           }).error(function(data, status, headers, config) {
+             $scope.status = status;
+           });
+           
+    };
+  
     // Jika tombol vote di klik
     
     $scope.voteAnswer = function(id, voteType, token) { 
@@ -30,7 +50,7 @@ stackExchange.controller('VoteController', function ($scope, $http, $location) {
           
           
         }).success(function(data, status, headers, config) {
-            $scope.voteNumAnswer = data;
+            $scope.voteNumAnswer[id] = data;
            }).error(function(data, status, headers, config) {
              $scope.status = status;
            });
@@ -77,18 +97,16 @@ stackExchange.controller('CommentController', function ($scope, $http, $location
            $scope.status = status;
          });
   };
-});
-
-stackExchange.controller('AddCommentController', function ($scope, $http, $location) {
-  // Jika tombol add comment di klik
-    
-    $scope.addComment = function(token, id) { 
+  
+  $scope.addComment = function(token, id) { 
       // Membuat http request
+      console.log("gila");
       $http({
         method: "POST",
-        url: "http://localhost:8083/Comment_Vote_Service/CommentController",
+        url: "http://localhost:8083/Comment_Vote_Service/AddCommentController",
         params: { token: token,
-                  id: id},
+                  id: id,
+                  content: $scope.commentContent},
         dataType: "json",
         headers : {
               'Content-Type' : 'application/x-www-form-urlencoded; charset=UTF-8'
